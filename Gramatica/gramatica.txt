@@ -1,0 +1,91 @@
+	/* CONFLICTO DESPLAZAMIENTO/REDUCCION DESPUÉS DE AGREGAR <LIST_IMPORT> */
+
+S0:					S
+
+S:					LIST_IMPORT CLASE
+
+LIST_IMPORT:		LIST_IMPORT IMPORT
+					| IMPORT
+					|
+					;
+
+IMPORT:				tokenImport tokenId tokenDolar
+					;
+
+CLASE:				VISIBILIDAD tokenClase tokenId tokenOInter CUERPO_CLASE tokenCInter 
+					;
+
+VISIBILIDAD: 		tokenPrivado
+					| 
+					tokenPublico
+					|
+					;
+
+CUERPO_CLASE		: DECLARACION tokenDolar
+					| ASIGNACION tokenDolar
+					;
+
+COND 				: COND tokenAnd COND
+					| COND tokenNand COND
+					| COND tokenOr COND
+					| COND tokenNor COND
+					| COND tokenXor COND
+					| tokenNot COND
+					| E REL E
+					| E
+					;
+
+REL 				: tokenEquivalente
+					| tokenDiferente
+					| tokenMenor
+					| tokenMenorIgual
+					| tokenMayor
+					| tokenMayorIgual
+					;
+
+E 					: E tokenMas E
+					| E tokenMenos E
+					| E tokenPor E
+					| E tokenDivision E
+					| E tokenPotencia E
+					| tokenOPar E tokenCPar
+					| tokenCadena
+					| tokenEntero
+					| tokenDecimal
+					| tokenId
+					| LLAMADA
+					;
+
+LLAMADA 			: tokenId tokenOPar ATTR tokenCPar
+					;
+
+ATTR 				: LIST_ATTR
+					| 
+					;
+
+LIST_ATTR 			: LIST_ATTR tokenComa COND
+					| COND
+					;
+
+DECLARACION 		: VISIBILIDAD tokenVar TIPO LIST_ID ASIGN_DEC
+					;
+
+TIPO 				: tokenInt
+					| tokenDouble
+					| tokenBool
+					| tokenChar
+					| tokenString
+					;
+
+LIST_ID				: LIST_ID tokenComa tokenId
+					| tokenId
+					;
+
+ASIGN_DEC 			: tokenIgual COND
+					| 
+					;
+
+ASIGNACION 			: tokenId tokenIgual COND
+					| tokenId tokenIncremento
+					| tokenId tokenDecremento
+					;
