@@ -38,6 +38,10 @@
 %token <cadena> tokenOPar tokenCPar
 %token <cadena> tokenDolar tokenComa
 
+%token <cadena> tokenMain
+%token <cadena> tokenVoid
+%token <cadena> tokenRetorna
+
 %token <cadena> tokenInt
 %token <cadena> tokenDouble
 %token <cadena> tokenBool
@@ -75,15 +79,20 @@
 %type <Nodo> S0 S
 %type <Nodo> LIST_IMPORT IMPORT
 %type <Nodo> CLASE
-%type <Nodo> LIST_CUERPO_CLASE CUERPO_CLASE
 %type <Nodo> VISIBILIDAD
+%type <Nodo> LIST_CUERPO_CLASE CUERPO_CLASE
+%type <Nodo> PROCEDIMIENTO DECLARACION_G
+%type <Nodo> PRINCIPAL METODO FUNCION
+%type <Nodo> LIST_PAR PAR
+%type <Nodo> LIST_SENTSM LIST_SENTSF SENTSM SENTSF
+%type <Nodo> RETORNA
 %type <Nodo> COND
 %type <Nodo> REL
 %type <Nodo> E
 %type <Nodo> LLAMADA
+%type <Nodo> TIPO
 %type <Nodo> ATTRS LIST_ATTR
 %type <Nodo> DECLARACION ASIGN_DEC
-%type <Nodo> TIPO
 %type <Nodo> LIST_ID
 %type <Nodo> ASIGNACION
 
@@ -201,9 +210,143 @@ LIST_CUERPO_CLASE 	: LIST_CUERPO_CLASE CUERPO_CLASE
 						$$ = padre;
 					}
 
-CUERPO_CLASE		: DECLARACION tokenDolar
+CUERPO_CLASE		: PRINCIPAL
 					{
 						Nodo *padre = new Nodo("CUERPO_CLASE", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					| VISIBILIDAD PROCEDIMIENTO
+					{
+						Nodo *padre = new Nodo("CUERPO_CLASE", "---", 0, 0);
+						padre->addHijo($1);
+						padre->addHijo($2);
+
+						$$ = padre;
+					}
+					;
+
+PRINCIPAL 			: tokenMain tokenOPar tokenCPar tokenOInter LIST_SENTSM tokenCInter
+					{
+						Nodo *padre = new Nodo("PRINCIPAL", "---", 0, 0);
+						Nodo *tokenMain = new Nodo("tokenMain", $1, yyfila, yycolumna);
+						Nodo *tokenOPar = new Nodo("tokenOPar", $2, yyfila, yycolumna);
+						Nodo *tokenCPar = new Nodo("tokenCPar", $3, yyfila, yycolumna);
+						Nodo *tokenOInter = new Nodo("tokenOInter", $4, yyfila, yycolumna);
+						Nodo *tokenCInter = new Nodo("tokenCInter", $6, yyfila, yycolumna);
+						padre->addHijo(tokenMain);
+						padre->addHijo(tokenOPar);
+						padre->addHijo(tokenCPar);
+						padre->addHijo(tokenOInter);
+						padre->addHijo($5);
+						padre->addHijo(tokenCInter);
+
+						$$ = padre;
+					}
+					;
+
+PROCEDIMIENTO 		: DECLARACION_G tokenDolar
+					{
+						Nodo *padre = new Nodo("PROCEDIMIENTO", "---", 0, 0);
+						Nodo *tokenDolar = new Nodo("tokenDolar", $2, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenDolar);
+
+						$$ = padre;
+					}
+					| FUNCION
+					{
+						Nodo *padre = new Nodo("PROCEDIMIENTO", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					| METODO
+					{
+						Nodo *padre = new Nodo("PROCEDIMIENTO", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					;
+
+DECLARACION_G 		: tokenVar TIPO LIST_ID ASIGN_DEC
+					{
+						Nodo *padre = new Nodo("DECLARACION_G", "---", 0, 0);
+						Nodo *tokenVar = new Nodo("tokenVar", $1, yyfila, yycolumna);
+						padre->addHijo(tokenVar);
+						padre->addHijo($2);
+						padre->addHijo($3);
+						padre->addHijo($4);
+
+						$$ = padre;
+					}
+					;
+
+FUNCION 			: TIPO tokenId tokenOPar LIST_PAR tokenCPar tokenOInter LIST_SENTSF tokenCInter
+					{
+						Nodo *padre = new Nodo("FUNCION", "---", 0, 0);
+						Nodo *tokenId = new Nodo("tokenId", $2, yyfila, yycolumna);
+						Nodo *tokenOPar = new Nodo("tokenOPar", $3, yyfila, yycolumna);
+						Nodo *tokenCPar = new Nodo("tokenCPar", $5, yyfila, yycolumna);
+						Nodo *tokenOInter = new Nodo("tokenOInter", $6, yyfila, yycolumna);
+						Nodo *tokenCInter = new Nodo("tokenCInter", $8, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenId);
+						padre->addHijo(tokenOPar);
+						padre->addHijo($4);
+						padre->addHijo(tokenCPar);
+						padre->addHijo(tokenOInter);
+						padre->addHijo($7);
+						padre->addHijo(tokenCInter);
+
+						$$ = padre;
+					}
+					;
+
+METODO 				: tokenVoid tokenId tokenOPar LIST_PAR tokenCPar tokenOInter LIST_SENTSM tokenCInter
+					{
+						Nodo *padre = new Nodo("METODO", "---", 0, 0);
+						Nodo *tokenVoid = new Nodo("tokenVoid", $1, yyfila, yycolumna);
+						Nodo *tokenId = new Nodo("tokenId", $2, yyfila, yycolumna);
+						Nodo *tokenOPar = new Nodo("tokenOPar", $3, yyfila, yycolumna);
+						Nodo *tokenCPar = new Nodo("tokenCPar", $5, yyfila, yycolumna);
+						Nodo *tokenOInter = new Nodo("tokenOInter", $6, yyfila, yycolumna);
+						Nodo *tokenCInter = new Nodo("tokenCInter", $8, yyfila, yycolumna);
+						padre->addHijo(tokenVoid);
+						padre->addHijo(tokenId);
+						padre->addHijo(tokenOPar);
+						padre->addHijo($4);
+						padre->addHijo(tokenCPar);
+						padre->addHijo(tokenOInter);
+						padre->addHijo($7);
+						padre->addHijo(tokenCInter);
+
+						$$ = padre;
+					}
+					;
+
+LIST_SENTSM 		: LIST_SENTSM SENTSM
+					{
+						Nodo *padre = new Nodo("LIST_SENTSM", "---", 0, 0);
+						padre->addHijo($1);
+						padre->addHijo($2);
+
+						$$ = padre;
+					}
+					| SENTSM
+					{
+						Nodo *padre = new Nodo("LIST_SENTSM", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					;
+
+SENTSM 				: DECLARACION tokenDolar
+					{
+						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
 						Nodo *tokenDolar = new Nodo("tokenDolar", $2, yyfila, yycolumna);
 						padre->addHijo($1);
 						padre->addHijo(tokenDolar);
@@ -212,10 +355,183 @@ CUERPO_CLASE		: DECLARACION tokenDolar
 					}
 					| ASIGNACION tokenDolar
 					{
-						Nodo *padre = new Nodo("CUERPO_CLASE", "---", 0, 0);
+						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
 						Nodo *tokenDolar = new Nodo("tokenDolar", $2, yyfila, yycolumna);
 						padre->addHijo($1);
 						padre->addHijo(tokenDolar);
+
+						$$ = padre;
+					}
+					;
+
+LIST_SENTSF 		: LIST_SENTSF SENTSF
+					{
+						Nodo *padre = new Nodo("LIST_SENTSF", "---", 0, 0);
+						padre->addHijo($1);
+						padre->addHijo($2);
+
+						$$ = padre;
+					}
+					| SENTSF
+					{
+						Nodo *padre = new Nodo("LIST_SENTSF", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					;
+
+SENTSF 				: DECLARACION tokenDolar
+					{
+						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
+						Nodo *tokenDolar = new Nodo("tokenDolar", $2, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenDolar);
+
+						$$ = padre;
+					}
+					| ASIGNACION tokenDolar
+					{
+						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
+						Nodo *tokenDolar = new Nodo("tokenDolar", $2, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenDolar);
+
+						$$ = padre;
+					}
+					| RETORNA
+					{
+						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					;
+
+RETORNA 				: tokenRetorna COND tokenDolar
+					{
+						Nodo *padre = new Nodo("RETORNA", "---", 0, 0);
+						Nodo *tokenRetorna = new Nodo("tokenRetorna", $1, yyfila, yycolumna);
+						Nodo *tokenDolar = new Nodo("tokenDolar", $3, yyfila, yycolumna);
+						padre->addHijo(tokenRetorna);
+						padre->addHijo($2);
+						padre->addHijo(tokenDolar);
+
+						$$ = padre;	
+					}
+					;
+
+TIPO 				: tokenInt
+					{
+						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
+						Nodo *tokenInt = new Nodo("tokenInt", $1, yyfila, yycolumna);
+						padre->addHijo(tokenInt);
+
+						$$ = padre;
+					}
+					| tokenDouble
+					{
+						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
+						Nodo *tokenDouble = new Nodo("tokenDouble", $1, yyfila, yycolumna);
+						padre->addHijo(tokenDouble);
+						
+						$$ = padre;
+					}
+					| tokenBool
+					{
+						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
+						Nodo *tokenbool = new Nodo("tokenbool", $1, yyfila, yycolumna);
+						padre->addHijo(tokenbool);
+						
+						$$ = padre;
+					}
+					| tokenChar
+					{
+						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
+						Nodo *tokenChar = new Nodo("tokenChar", $1, yyfila, yycolumna);
+						padre->addHijo(tokenChar);
+						
+						$$ = padre;
+					}
+					| tokenString
+					{
+						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
+						Nodo *tokenString = new Nodo("tokenString", $1, yyfila, yycolumna);
+						padre->addHijo(tokenString);
+						
+						$$ = padre;
+					}
+					;
+
+LIST_ID 			: LIST_ID tokenComa tokenId
+					{
+						Nodo *padre = new Nodo("LIST_ID", "---", 0, 0);
+						Nodo *tokenComa = new Nodo("tokenComa", $2, yyfila, yycolumna);
+						Nodo *tokenId = new Nodo("tokenId", $3, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenComa);
+						padre->addHijo(tokenId);
+
+						$$ = padre;
+					}
+					| tokenId
+					{
+						Nodo *padre = new Nodo("LIST_ID", "---", 0, 0);
+						Nodo *tokenId = new Nodo("tokenId", $1, yyfila, yycolumna);
+						padre->addHijo(tokenId);
+
+						$$ = padre;
+					}
+					;
+
+ASIGN_DEC 			: tokenIgual COND
+					{
+						Nodo *padre = new Nodo("ASIGN_DEC", "---", 0, 0);
+						Nodo *tokenIgual = new Nodo("tokenIgual", $1, yyfila, yycolumna);
+						padre->addHijo(tokenIgual);
+						padre->addHijo($2);
+
+						$$ = padre;
+					}
+					|
+					{
+						Nodo *padre = new Nodo("ASIGN_DEC", "---", 0, 0);
+
+						$$ = padre;
+					}
+					;
+
+LIST_PAR 			: LIST_PAR tokenComa PAR
+					{
+						Nodo *padre = new Nodo("LIST_PAR", "---", 0, 0);
+						Nodo *tokenComa = new Nodo("tokenComa", $2, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenComa);
+						padre->addHijo($3);
+
+						$$ = padre;
+					}
+					| PAR
+					{
+						Nodo *padre = new Nodo("LIST_PAR", "---", 0, 0);
+						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					;
+
+PAR 				: TIPO tokenId
+					{
+						Nodo *padre = new Nodo("LIST_PAR", "---", 0, 0);
+						Nodo *tokenId = new Nodo("tokenId", $2, yyfila, yycolumna);
+						padre->addHijo($1);
+						padre->addHijo(tokenId);
+
+						$$ = padre;
+					}
+					| 
+					{
+						Nodo *padre = new Nodo("PAR", "---", 0, 0);
 
 						$$ = padre;
 					}
@@ -514,86 +830,6 @@ DECLARACION 		: VISIBILIDAD tokenVar TIPO LIST_ID ASIGN_DEC
 					}
 					;
 
-TIPO 				: tokenInt
-					{
-						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
-						Nodo *tokenInt = new Nodo("tokenInt", $1, yyfila, yycolumna);
-						padre->addHijo(tokenInt);
-
-						$$ = padre;
-					}
-					| tokenDouble
-					{
-						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
-						Nodo *tokenDouble = new Nodo("tokenDouble", $1, yyfila, yycolumna);
-						padre->addHijo(tokenDouble);
-						
-						$$ = padre;
-					}
-					| tokenBool
-					{
-						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
-						Nodo *tokenbool = new Nodo("tokenbool", $1, yyfila, yycolumna);
-						padre->addHijo(tokenbool);
-						
-						$$ = padre;
-					}
-					| tokenChar
-					{
-						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
-						Nodo *tokenChar = new Nodo("tokenChar", $1, yyfila, yycolumna);
-						padre->addHijo(tokenChar);
-						
-						$$ = padre;
-					}
-					| tokenString
-					{
-						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
-						Nodo *tokenString = new Nodo("tokenString", $1, yyfila, yycolumna);
-						padre->addHijo(tokenString);
-						
-						$$ = padre;
-					}
-					;
-
-LIST_ID 			: LIST_ID tokenComa tokenId
-					{
-						Nodo *padre = new Nodo("LIST_ID", "---", 0, 0);
-						Nodo *tokenComa = new Nodo("tokenComa", $2, yyfila, yycolumna);
-						Nodo *tokenId = new Nodo("tokenId", $3, yyfila, yycolumna);
-						padre->addHijo($1);
-						padre->addHijo(tokenComa);
-						padre->addHijo(tokenId);
-
-						$$ = padre;
-					}
-					| tokenId
-					{
-						Nodo *padre = new Nodo("LIST_ID", "---", 0, 0);
-						Nodo *tokenId = new Nodo("tokenId", $1, yyfila, yycolumna);
-						padre->addHijo(tokenId);
-
-						$$ = padre;
-					}
-					;
-
-ASIGN_DEC 			: tokenIgual COND
-					{
-						Nodo *padre = new Nodo("ASIGN_DEC", "---", 0, 0);
-						Nodo *tokenIgual = new Nodo("tokenIgual", $1, yyfila, yycolumna);
-						padre->addHijo(tokenIgual);
-						padre->addHijo($2);
-
-						$$ = padre;
-					}
-					|
-					{
-						Nodo *padre = new Nodo("ASIGN_DEC", "---", 0, 0);
-
-						$$ = padre;
-					}
-					;
-
 ASIGNACION 			: tokenId tokenIgual COND
 					{
 						Nodo *padre = new Nodo("ASIGNACION", "---", 0, 0);
@@ -626,4 +862,5 @@ ASIGNACION 			: tokenId tokenIgual COND
 						$$ = padre;
 					}
 					;
+
 %%

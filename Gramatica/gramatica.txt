@@ -1,4 +1,4 @@
-	/* CONFLICTO DESPLAZAMIENTO/REDUCCION DESPUÉS DE AGREGAR <LIST_IMPORT> */
+/* CONFLICTO DESPLAZAMIENTO/REDUCCION DESPUÉS DE AGREGAR <LIST_IMPORT> */
 
 S0:					S
 
@@ -12,7 +12,7 @@ LIST_IMPORT:		LIST_IMPORT IMPORT
 IMPORT:				tokenImport tokenId tokenDolar
 					;
 
-CLASE:				VISIBILIDAD tokenClase tokenId tokenOInter CUERPO_CLASE tokenCInter 
+CLASE:				VISIBILIDAD tokenClase tokenId tokenOInter LIST_CUERPO_CLASE tokenCInter 
 					;
 
 VISIBILIDAD: 		tokenPrivado
@@ -21,10 +21,70 @@ VISIBILIDAD: 		tokenPrivado
 					|
 					;
 
-CUERPO_CLASE		: DECLARACION tokenDolar
-					| ASIGNACION tokenDolar
+LIST_CUERPO_CLASE 	: LIST_CUERPO_CLASE CUERPO_CLASE
+					| CUERPO_CLASE
+
+CUERPO_CLASE		: PRINCIPAL
+					| VISIBILIDAD PROCEDIMIENTO;
+
+PRINCIPAL 			: tokenMain tokenOPar tokenCPar tokenOInter LIST_SENTSM tokenCInter
 					;
 
+PROCEDIMIENTO 		: DECLARACION_G tokenDolar
+					| FUNCION
+					| METODO
+					;
+
+DECLARACION_G 		: tokenVar TIPO LIST_ID ASIGN_DEC
+					;
+
+FUNCION 			: TIPO tokenId tokenOPar LIST_PAR tokenCPar tokenOInter LIST_SENTSF tokenCInter
+					;
+
+METODO 				: tokenVoid tokenId tokenOPar LIST_PAR tokenOInter LIST_SENTSM tokenCInter
+					;
+
+LIST_SENTSM 		: LIST_SENTSM SENTSM
+					| SENTSM
+					;
+
+SENTSM 				: DECLARACION tokenComa;
+					| ASIGNACION tokenComa;
+
+LIST_SENTSF 		: LIST_SENTSF SENTSF
+					| SENTSF
+					;
+
+SENTSF 				: DECLARACION tokenComa;
+					| ASIGNACION tokenComa;
+					| RETURN
+					;
+
+RETURN 				: tokenReturn COND tokenComa
+					;
+
+TIPO 				: tokenInt
+					| tokenDouble
+					| tokenBool
+					| tokenChar
+					| tokenString
+					;
+
+LIST_ID				: LIST_ID tokenComa tokenId
+					| tokenId
+					;
+
+ASIGN_DEC 			: tokenIgual COND
+					| 
+					;
+
+LIST_PAR 			: LIST_PAR tokenComa PAR
+					| PAR
+					;
+
+PAR 				: TIPO id
+					;
+					
 COND 				: COND tokenAnd COND
 					| COND tokenNand COND
 					| COND tokenOr COND
@@ -68,21 +128,6 @@ LIST_ATTR 			: LIST_ATTR tokenComa COND
 					;
 
 DECLARACION 		: VISIBILIDAD tokenVar TIPO LIST_ID ASIGN_DEC
-					;
-
-TIPO 				: tokenInt
-					| tokenDouble
-					| tokenBool
-					| tokenChar
-					| tokenString
-					;
-
-LIST_ID				: LIST_ID tokenComa tokenId
-					| tokenId
-					;
-
-ASIGN_DEC 			: tokenIgual COND
-					| 
 					;
 
 ASIGNACION 			: tokenId tokenIgual COND

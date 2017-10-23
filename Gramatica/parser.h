@@ -55,36 +55,39 @@ extern int yydebug;
     tokenCPar = 265,
     tokenDolar = 266,
     tokenComa = 267,
-    tokenInt = 268,
-    tokenDouble = 269,
-    tokenBool = 270,
-    tokenChar = 271,
-    tokenString = 272,
-    tokenVar = 273,
-    tokenIgual = 274,
-    tokenIncremento = 275,
-    tokenDecremento = 276,
-    tokenPotencia = 277,
-    tokenMas = 278,
-    tokenMenos = 279,
-    tokenDivision = 280,
-    tokenPor = 281,
-    tokenNot = 282,
-    tokenAnd = 283,
-    tokenNand = 284,
-    tokenOr = 285,
-    tokenNor = 286,
-    tokenXor = 287,
-    tokenEquivalente = 288,
-    tokenDiferente = 289,
-    tokenMenor = 290,
-    tokenMenorIgual = 291,
-    tokenMayor = 292,
-    tokenMayorIgual = 293,
-    tokenCadena = 294,
-    tokenEntero = 295,
-    tokenDecimal = 296,
-    tokenId = 297
+    tokenMain = 268,
+    tokenVoid = 269,
+    tokenRetorna = 270,
+    tokenInt = 271,
+    tokenDouble = 272,
+    tokenBool = 273,
+    tokenChar = 274,
+    tokenString = 275,
+    tokenVar = 276,
+    tokenIgual = 277,
+    tokenIncremento = 278,
+    tokenDecremento = 279,
+    tokenPotencia = 280,
+    tokenMas = 281,
+    tokenMenos = 282,
+    tokenDivision = 283,
+    tokenPor = 284,
+    tokenNot = 285,
+    tokenAnd = 286,
+    tokenNand = 287,
+    tokenOr = 288,
+    tokenNor = 289,
+    tokenXor = 290,
+    tokenEquivalente = 291,
+    tokenDiferente = 292,
+    tokenMenor = 293,
+    tokenMenorIgual = 294,
+    tokenMayor = 295,
+    tokenMayorIgual = 296,
+    tokenCadena = 297,
+    tokenEntero = 298,
+    tokenDecimal = 299,
+    tokenId = 300
   };
 #endif
 
@@ -98,7 +101,7 @@ union YYSTYPE
 	char cadena[255];
 	struct Nodo *Nodo;
 
-#line 102 "parser.h" /* yacc.c:1909  */
+#line 105 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

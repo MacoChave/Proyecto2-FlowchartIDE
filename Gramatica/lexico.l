@@ -104,6 +104,7 @@ id				{letra}({letra}|{numero}|_)*
 
 					return tokenPublico;
 				}
+
 "int"			{
 					cout << yytext << endl;
 					yycolumna += yyleng;
@@ -144,12 +145,36 @@ id				{letra}({letra}|{numero}|_)*
 					return tokenString;
 				}
 
-"var"		{
+"var"			{
 					cout << yytext << endl;
 					yycolumna += yyleng;
 					strcpy(yylval.cadena, yytext);
 
 					return tokenVar;
+				}
+
+"Main"			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenMain;
+				}
+
+"void"			{	
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenVoid;
+				}
+
+"retorna" 		{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenRetorna;
 				}
 
 "="				{
