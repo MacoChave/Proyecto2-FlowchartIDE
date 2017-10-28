@@ -193,6 +193,30 @@ id				{letra}({letra}|{numero}|_)*
 					return tokenSino;
 				}
 
+"para"			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenPara;
+				}
+
+"mientras" 		{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenMientras;
+				}
+
+"hacer" 		{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenHacer;
+				}
+
 "="				{
 					cout << yytext << endl;
 					yycolumna += yyleng;
@@ -255,6 +279,14 @@ id				{letra}({letra}|{numero}|_)*
 					strcpy(yylval.cadena, yytext);
 
 					return tokenComa;
+				}
+
+";" 			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenPtoComa;
 				}
 
 "$" 			{
