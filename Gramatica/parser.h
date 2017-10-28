@@ -67,27 +67,29 @@ extern int yydebug;
     tokenIgual = 277,
     tokenIncremento = 278,
     tokenDecremento = 279,
-    tokenPotencia = 280,
-    tokenMas = 281,
-    tokenMenos = 282,
-    tokenDivision = 283,
-    tokenPor = 284,
-    tokenNot = 285,
-    tokenAnd = 286,
-    tokenNand = 287,
-    tokenOr = 288,
-    tokenNor = 289,
-    tokenXor = 290,
-    tokenEquivalente = 291,
-    tokenDiferente = 292,
-    tokenMenor = 293,
-    tokenMenorIgual = 294,
-    tokenMayor = 295,
-    tokenMayorIgual = 296,
-    tokenCadena = 297,
-    tokenEntero = 298,
-    tokenDecimal = 299,
-    tokenId = 300
+    tokenSi = 280,
+    tokenSino = 281,
+    tokenPotencia = 282,
+    tokenMas = 283,
+    tokenMenos = 284,
+    tokenDivision = 285,
+    tokenPor = 286,
+    tokenNot = 287,
+    tokenAnd = 288,
+    tokenNand = 289,
+    tokenOr = 290,
+    tokenNor = 291,
+    tokenXor = 292,
+    tokenEquivalente = 293,
+    tokenDiferente = 294,
+    tokenMenor = 295,
+    tokenMenorIgual = 296,
+    tokenMayor = 297,
+    tokenMayorIgual = 298,
+    tokenCadena = 299,
+    tokenEntero = 300,
+    tokenDecimal = 301,
+    tokenId = 302
   };
 #endif
 
@@ -96,12 +98,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 30 "sintactico.y" /* yacc.c:1909  */
+#line 35 "sintactico.y" /* yacc.c:1909  */
 
 	char cadena[255];
 	struct Nodo *Nodo;
 
-#line 105 "parser.h" /* yacc.c:1909  */
+#line 107 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -22,6 +22,10 @@ Nodo::~Nodo()
     lexema = "";
     fila = 0;
     columna = 0;
+    foreach (Nodo *nodo, hijos) {
+        delete nodo;
+        nodo = NULL;
+    }
 }
 
 char *Nodo::getToken()

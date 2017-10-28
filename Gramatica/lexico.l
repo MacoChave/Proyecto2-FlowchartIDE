@@ -177,6 +177,22 @@ id				{letra}({letra}|{numero}|_)*
 					return tokenRetorna;
 				}
 
+"si" 			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenSi;
+				}
+
+"sino"			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenSino;
+				}
+
 "="				{
 					cout << yytext << endl;
 					yycolumna += yyleng;

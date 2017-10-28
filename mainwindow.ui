@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>590</width>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="btnBuscarArchivo">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>450</x>
       <y>20</y>
       <width>121</width>
       <height>25</height>
@@ -45,8 +45,8 @@
      <rect>
       <x>20</x>
       <y>80</y>
-      <width>221</width>
-      <height>151</height>
+      <width>401</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="placeholderText">
@@ -56,7 +56,7 @@
    <widget class="QPushButton" name="btnLeer">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>450</x>
       <y>80</y>
       <width>121</width>
       <height>25</height>
@@ -69,7 +69,7 @@
    <widget class="QPushButton" name="btnAnalizar">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>450</x>
       <y>120</y>
       <width>121</width>
       <height>21</height>
@@ -79,13 +79,26 @@
      <string>Analizar Archivo</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>160</y>
+      <width>121</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Limpiar Arbol</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>590</width>
      <height>22</height>
     </rect>
    </property>

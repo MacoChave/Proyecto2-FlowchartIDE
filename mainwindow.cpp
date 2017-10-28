@@ -5,6 +5,7 @@ extern int yyrestart(FILE *archivo);
 extern int yyparse();
 extern Nodo *getRaiz();
 extern void vaciarArbol();
+extern void deleteArbol();
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -118,3 +119,4 @@ void MainWindow::escribir(char *texto, char *filename, char *tipo)
         fclose(grafico);
     }
 }
+
