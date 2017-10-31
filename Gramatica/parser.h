@@ -59,41 +59,42 @@ extern int yydebug;
     tokenMain = 269,
     tokenVoid = 270,
     tokenRetorna = 271,
-    tokenInt = 272,
-    tokenDouble = 273,
-    tokenBool = 274,
-    tokenChar = 275,
-    tokenString = 276,
-    tokenVar = 277,
-    tokenIgual = 278,
-    tokenIncremento = 279,
-    tokenDecremento = 280,
-    tokenSi = 281,
-    tokenSino = 282,
-    tokenPara = 283,
-    tokenMientras = 284,
-    tokenHacer = 285,
-    tokenPotencia = 286,
-    tokenMas = 287,
-    tokenMenos = 288,
-    tokenDivision = 289,
-    tokenPor = 290,
-    tokenNot = 291,
-    tokenAnd = 292,
-    tokenNand = 293,
-    tokenOr = 294,
-    tokenNor = 295,
-    tokenXor = 296,
-    tokenEquivalente = 297,
-    tokenDiferente = 298,
-    tokenMenor = 299,
-    tokenMenorIgual = 300,
-    tokenMayor = 301,
-    tokenMayorIgual = 302,
-    tokenCadena = 303,
-    tokenEntero = 304,
-    tokenDecimal = 305,
-    tokenId = 306
+    tokenSalir = 272,
+    tokenInt = 273,
+    tokenDouble = 274,
+    tokenBool = 275,
+    tokenChar = 276,
+    tokenString = 277,
+    tokenVar = 278,
+    tokenIgual = 279,
+    tokenIncremento = 280,
+    tokenDecremento = 281,
+    tokenSi = 282,
+    tokenSino = 283,
+    tokenPara = 284,
+    tokenMientras = 285,
+    tokenHacer = 286,
+    tokenPotencia = 287,
+    tokenMas = 288,
+    tokenMenos = 289,
+    tokenDivision = 290,
+    tokenPor = 291,
+    tokenNot = 292,
+    tokenAnd = 293,
+    tokenNand = 294,
+    tokenOr = 295,
+    tokenNor = 296,
+    tokenXor = 297,
+    tokenEquivalente = 298,
+    tokenDiferente = 299,
+    tokenMenor = 300,
+    tokenMenorIgual = 301,
+    tokenMayor = 302,
+    tokenMayorIgual = 303,
+    tokenCadena = 304,
+    tokenEntero = 305,
+    tokenDecimal = 306,
+    tokenId = 307
   };
 #endif
 
@@ -102,12 +103,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 35 "sintactico.y" /* yacc.c:1909  */
+#line 32 "sintactico.y" /* yacc.c:1909  */
 
 	char cadena[255];
 	struct Nodo *Nodo;
 
-#line 111 "parser.h" /* yacc.c:1909  */
+#line 112 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -30,6 +30,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QList<Nodo*> nodos;
     FILE *archivoInput;
     int contador = 1;
     char path[128];

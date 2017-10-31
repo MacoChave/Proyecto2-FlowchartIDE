@@ -209,6 +209,14 @@ id				{letra}({letra}|{numero}|_)*
 					return tokenMientras;
 				}
 
+"salir"			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenSalir;
+				}
+
 "hacer" 		{
 					cout << yytext << endl;
 					yycolumna += yyleng;

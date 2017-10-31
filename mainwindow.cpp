@@ -5,7 +5,6 @@ extern int yyrestart(FILE *archivo);
 extern int yyparse();
 extern Nodo *getRaiz();
 extern void vaciarArbol();
-extern void deleteArbol();
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -79,6 +78,10 @@ void MainWindow::on_btnAnalizar_clicked()
             system("dot -Tpng /home/marco/Escritorio/ast.dot -o /home/marco/Escritorio/ast.png");
 
             cout << "SE CREÓ EL ÁRBOL SINTÁCTICO" << endl;
+
+            nodos << raiz;
+
+            vaciarArbol();
         }
         else
             cout << "NO SE CREÓ EL ÁRBOL SINTÁCTICO" << endl;
