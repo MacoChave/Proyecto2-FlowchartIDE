@@ -16,13 +16,22 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     Gramatica/nodo.cpp \
     Gramatica/parser.cpp \
-    Gramatica/scanner.cpp
+    Gramatica/scanner.cpp \
+    Ambitos/ambito.cpp \
+    Ambitos/variable.cpp \
+    principal.cpp \
+    Ambitos/tipodato.cpp
 
 HEADERS  += mainwindow.h \
     Gramatica/nodo.h \
     Gramatica/parser.h \
     Gramatica/scanner.h \
     Gramatica/lexico.l \
-    Gramatica/sintactico.y
+    Gramatica/sintactico.y \
+    Ambitos/ambito.h \
+    Ambitos/variable.h \
+    principal.h \
+    Ambitos/tipodato.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    principal.ui

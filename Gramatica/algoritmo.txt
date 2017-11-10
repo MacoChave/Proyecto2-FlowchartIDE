@@ -1,0 +1,131 @@
+correrAplicacion()
+	Nodo metodoMain = null
+	foreach(Nodo s, nodos)
+		Nodo clase = s->getHijos->back
+		metodoMain = buscarMain(clase->getHijos->back)
+		if (metodoMain != null)
+			break;
+		clase = 0
+	if (metodoMain != null)
+		ejecutarMetodo(metodoMain, "Main", false)
+
+Nodo buscarMain(Nodo cuerpos)
+	Nodo cuerpo = cuerpos->getHijos->back
+	if (cuerpo->getHijos->back->token == "PRINCIPAL")
+		return cuerpo->getHijos->back
+	cuerpo = 0
+	else
+		if (cuerpos->getHijos->count > 1)
+			return buscarMain(cuerpos->getHijos->front)
+		else
+			return null
+
+Nodo buscar(String nombre)
+	Nodo procedimiento = null
+	foreach(Nodo s, nodos)
+		Nodo clase = s->getHijos->back
+		procedimiento = buscarProcedimiento(clase->getHijos->back, nombre)
+		if (procedimiento != null)
+			break;
+		clase = 0
+	return procedimiento;
+
+Nodo buscarProcedimiento(Nodo cuerpos, String nombre)
+	Nodo cuerpo = cuerpos->getHijos->back
+	Nodo proc = cuerpo->getHijos->back
+	if (proc->token == "FUNCION"
+		| proc->token == "METODO")
+		if (proc->getHijos(1) == nombre)
+			return proc
+		cuerpo = proc = 0
+	else
+		if (cuerpos->getHijos->count > 1)
+			return buscarProcedimiento(cuerpos->getHijos->front, nombre)
+		else
+			return null
+
+ejecutarMetodo(Nodo sentencias)
+	if (sentencias->getHijos->count > 1)
+		ejecutarMetodo(sentencias->getHijos->front)
+	Nodo sentencia = sentencias->getHijos->back
+	else if (sentencia->token == "DECLARACION")
+	else if (sentencia->token == "ASIGNACION")
+	else if (sentencia->token == "SI_M")
+		String cond = obtenerCOND(sentencia->getHijos(1))
+		if (cond.startWith("bool"))
+			cond.remove("bool")
+			if (cond.compare("TRUE") == 0)
+				Ambito ambito = new Ambito(
+					"SI", "SI", 0, 0, 0)
+				ambitos << ambito
+				ejecutarMetodo(sentencia->getHijos(2))
+			else
+				if (sentencia->getHijos->back->getHijos->count > 0)
+					ejecutarMetodo(sentencia->getHijos->back)
+		else
+			log.e("Error semantico.")
+	else if (sentencia->token == "PARA_M")
+	else if (sentencia->token == "MIENTRAS_M")
+		PTO_MIENTRAS_M:
+		String cond = obtenerCOND(sentencia->getHijos(2))
+		if (cond.startWith("bool"))
+			cond.remove("bool");
+			if (cond.compare("TRUE") == 0)
+				Ambito ambito = new Ambito(
+					"MIENTRAS", "MIENTRAS", 0, 0, 0)
+				ambitos << ambito
+				ejecutarMetodo(sentencia->getHijos(5))
+				goto PTO_GRANDE_M;
+		else
+			log.e("Error semantico.")
+	else if (sentencia->token == "HACER_M")
+		PTO_HACER_M:
+		Ambito ambito = new Ambito(
+					"HACER", "HACER", 0, 0, 0)
+				ambitos << ambito
+		ejecutarMetodo(sentencia->getHijos(2))
+		String cond = obtenerCOND(sentencia->getHijos(6))
+		if (cond.startWith("bool"))
+			cond.remove("bool")
+			if (cond.compare("TRUE") == 0)
+				goto PTO_HACER_M;
+		else
+			log.e("Error semantico")
+	else if (sentencia->token == "GRAFICAR")
+		dibujarProcedimiento(sentencia->getHijos(2))
+	else if (sentencia->token == "PINTAR")
+		log.i(obtenerE(sentencia->getHijos(2)))
+	else if (sentencia->token == "tokenSalir")
+		String ambito = ambitos->back->getAmbito()
+		if (ambito.compare("PARA") == 0
+			|| ambito.compare("MIENTRAS") == 0
+			|| ambito.compare("HACER") == 0)
+			ambitos.pop()
+		else
+			log.e("Error semantico")
+	else if (sentencia->token == "LLAMADA")
+		String nombre = sentencia->getHijos->front->lexema
+		Nodo proc = buscar(nombre)
+		if (proc != null)
+			List<Variable> parametros = obtenerAttr(sentencia->getHijos(2))
+			Ambito ambito = new Ambito (
+				nombre, "VOID", parametros, 0)
+			ejecutarMetodo(proc)
+		else
+			log.e("Error semantico")
+
+ejecutarFuncion(Nodo sentencias)
+	if (sentencias->getHijos->count > 1)
+		ejecutarFuncion(sentencias->getHijos->front)
+	Nodo sentencia = sentencias->getHijos->back
+	if (sentencia->token == "DECLARACION")
+	if (sentencia->token == "ASIGNACION")
+	if (sentencia->token == "RETORNA")
+	if (sentencia->token == "SI_M")
+	if (sentencia->token == "PARA_M")
+	if (sentencia->token == "MIENTRAS_M")
+	if (sentencia->token == "HACER_M")
+	if (sentencia->token == "GRAFICAR")
+	if (sentencia->token == "PINTAR")
+	if (sentencia->token == "tokenSalir")
+	if (sentencia->token == "LLAMADA")

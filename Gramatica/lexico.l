@@ -2,6 +2,7 @@
 
 %{
 	#include <iostream>
+	#include <QString>
 	#include "parser.h"
 
 	using namespace std;
@@ -15,6 +16,7 @@ numero 			[0-9]
 entero 			"-"?{numero}+
 decimal 		"-"?({entero}"."{entero})
 string 			\"[^\"\n]*\"
+caracter 		\'[^\'\n]\'
 id				{letra}({letra}|{numero}|_)*
 
 %%
@@ -145,6 +147,54 @@ id				{letra}({letra}|{numero}|_)*
 					return tokenString;
 				}
 
+"verdadero" 	{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenTrue;
+				}
+
+"true" 			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenTrue;
+				}
+
+"1" 			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenTrue;
+				}
+
+"falso"		 	{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenFalse;
+				}
+
+"false"			{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenFalse;
+				}
+
+"0"				{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenFalse;
+				}
+
 "var"			{
 					cout << yytext << endl;
 					yycolumna += yyleng;
@@ -223,6 +273,22 @@ id				{letra}({letra}|{numero}|_)*
 					strcpy(yylval.cadena, yytext);
 
 					return tokenHacer;
+				}
+
+"Graficar"		{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenGraficar;
+				}
+
+"Pintar_Con"	{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenPintar;
 				}
 
 "="				{
@@ -465,6 +531,14 @@ id				{letra}({letra}|{numero}|_)*
 					return tokenCadena;
 				}
 
+{caracter} 		{
+					cout << yytext << endl;
+					yycolumna += yyleng;
+					strcpy(yylval.cadena, yytext);
+
+					return tokenCaracter;
+				}
+
 {id}			{
 					cout << yytext << endl; 
 					yycolumna += yyleng; 
@@ -475,6 +549,7 @@ id				{letra}({letra}|{numero}|_)*
 
 .				{
 					yycolumna+=yyleng;
+
 					cout<<"\n\nError Lexico:\nToken no reconocido "<<yytext<<"\n\n";
 				}
 

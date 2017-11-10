@@ -11,7 +11,6 @@ using namespace std;
 
 class Nodo
 {
-    QString name;
     QString token;
     QString lexema;
 	int fila;
@@ -21,17 +20,18 @@ public:
     Nodo();
     Nodo(char *token_, char *lexema_, int fila_, int columna_);
     ~Nodo();
-    char *getToken();
-    void setToken(char *value);
-    char *getLexema();
-    void setLexema(char *value);
-    int getFila();
-    void setFila(int value);
-    int getColumna();
-    void setColumna(int value);
     QList<Nodo *> getHijos();
     void addHijo(Nodo *value);
     char *getText();
+
+    QString getToken() const;
+    void setToken(const QString &value);
+    QString getLexema() const;
+    void setLexema(const QString &value);
+    int getFila() const;
+    void setFila(int value);
+    int getColumna() const;
+    void setColumna(int value);
 };
 
 #endif // NODO_H

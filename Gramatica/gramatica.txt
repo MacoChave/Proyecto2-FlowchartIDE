@@ -1,90 +1,88 @@
 /* CONFLICTO DESPLAZAMIENTO/REDUCCION DESPUÉS DE AGREGAR <LIST_IMPORT> */
 
-S0:					S
+S0 					: S
 
-S:					LIST_IMPORT CLASE
+S 					: LIST_IMPORT CLASE
 
-LIST_IMPORT:		LIST_IMPORT IMPORT
+LIST_IMPORT			: LIST_IMPORT IMPORT
 					| IMPORT
 					|
-					;
 
-IMPORT:				tokenImport tokenId tokenDolar
-					;
+IMPORT 				: tokenImport tokenId tokenDolar
 
-CLASE:				VISIBILIDAD tokenClase tokenId tokenOInter LIST_CUERPO_CLASE tokenCInter 
-					;
+CLASE 				: VISIBILIDAD tokenClase tokenId tokenOInter LIST_CUERPO_CLASE tokenCInter 
 
-VISIBILIDAD: 		tokenPrivado
-					| 
-					tokenPublico
+VISIBILIDAD			: tokenPrivado 
+					| tokenPublico
 					|
-					;
 
 LIST_CUERPO_CLASE 	: LIST_CUERPO_CLASE CUERPO_CLASE
 					| CUERPO_CLASE
 
 CUERPO_CLASE		: PRINCIPAL
-					| VISIBILIDAD PROCEDIMIENTO;
+					| VISIBILIDAD SENTENCIA
 
 PRINCIPAL 			: tokenMain tokenOPar tokenCPar tokenOInter LIST_SENTSM tokenCInter
-					;
 
-PROCEDIMIENTO 		: DECLARACION_G tokenDolar
-					| FUNCION
+SENTENCIA 			: DECLARACION_G tokenDolar
+					| PROCEDIMIENTO
+
+PROCEDIMIENTO 		: FUNCION
 					| METODO
-					;
-
-DECLARACION_G 		: tokenVar TIPO LIST_ID ASIGN_DEC
-					;
 
 FUNCION 			: TIPO tokenId tokenOPar LIST_PAR tokenCPar tokenOInter LIST_SENTSF tokenCInter
-					;
 
-METODO 				: tokenVoid tokenId tokenOPar LIST_PAR tokenOInter LIST_SENTSM tokenCInter
-					;
+METODO 				: tokenVoid tokenId tokenOPar LIST_PAR tokenCPar tokenOInter LIST_SENTSM tokenCInter
 
 LIST_SENTSM 		: LIST_SENTSM SENTSM
 					| SENTSM
-					;
 
-SENTSM 				: DECLARACION tokenComa;
-					| ASIGNACION tokenComa;
+SENTSM 				: DECLARACION tokenDolar
+					| ASIGNACION tokenDolar
+					| SI_M
+					| PARA_M
+					| MIENTRAS_M
+					| HACER_M
+					| GRAFICAR tokenDolar
+					| PINTAR tokenDolar
+					| tokenSalir tokenDolar
+					| LLAMADA tokenDolar
 
 LIST_SENTSF 		: LIST_SENTSF SENTSF
 					| SENTSF
-					;
 
-SENTSF 				: DECLARACION tokenComa;
-					| ASIGNACION tokenComa;
-					| RETURN
-					;
+SENTSF 				: DECLARACION tokenDolar
+					| ASIGNACION tokenDolar
+					| RETORNA
+					| SI_F
+					| PARA_F
+					| MIENTRAS_F
+					| HACER_F
+					| GRAFICAR tokenDolar
+					| PINTAR tokenDolar
+					| tokenSalir tokenDolar
+					| LLAMADA tokenDolar
 
-RETURN 				: tokenReturn COND tokenComa
-					;
+RETORNA				: tokenRetorna COND tokenDolar
 
 TIPO 				: tokenInt
 					| tokenDouble
 					| tokenBool
 					| tokenChar
 					| tokenString
-					;
 
-LIST_ID				: LIST_ID tokenComa tokenId
+LIST_ID 			: LIST_ID tokenComa tokenId
 					| tokenId
-					;
 
 ASIGN_DEC 			: tokenIgual COND
-					| 
-					;
+					|
 
 LIST_PAR 			: LIST_PAR tokenComa PAR
 					| PAR
-					;
 
-PAR 				: TIPO id
-					;
-					
+PAR 				: TIPO tokenId
+					| 
+
 COND 				: COND tokenAnd COND
 					| COND tokenNand COND
 					| COND tokenOr COND
@@ -93,7 +91,6 @@ COND 				: COND tokenAnd COND
 					| tokenNot COND
 					| E REL E
 					| E
-					;
 
 REL 				: tokenEquivalente
 					| tokenDiferente
@@ -101,7 +98,6 @@ REL 				: tokenEquivalente
 					| tokenMenorIgual
 					| tokenMayor
 					| tokenMayorIgual
-					;
 
 E 					: E tokenMas E
 					| E tokenMenos E
@@ -112,25 +108,55 @@ E 					: E tokenMas E
 					| tokenCadena
 					| tokenEntero
 					| tokenDecimal
+					| tokenCaracter
+					| tokenTrue
+					| tokenFalse
 					| tokenId
 					| LLAMADA
-					;
 
-LLAMADA 			: tokenId tokenOPar ATTR tokenCPar
-					;
+LLAMADA 			: tokenId tokenOPar ATTRS tokenCPar
 
-ATTR 				: LIST_ATTR
+ATTRS 				: LIST_ATTR
 					| 
-					;
 
 LIST_ATTR 			: LIST_ATTR tokenComa COND
 					| COND
-					;
+
+DECLARACION_G 		: tokenVar TIPO LIST_ID ASIGN_DEC
 
 DECLARACION 		: VISIBILIDAD tokenVar TIPO LIST_ID ASIGN_DEC
-					;
 
 ASIGNACION 			: tokenId tokenIgual COND
 					| tokenId tokenIncremento
 					| tokenId tokenDecremento
-					;
+
+SI_M 				: tokenSi tokenOPar COND tokenCPar tokenOInter LIST_SENTSM tokenCInter SINO_M
+
+SINO_M 				: tokenSino tokenOInter LIST_SENTSM tokenCInter
+					| 
+
+SI_F 				: tokenSi tokenOPar COND tokenCPar tokenOInter LIST_SENTSF tokenCInter SINO_F
+
+SINO_F 				: tokenSino tokenOInter LIST_SENTSF tokenCInter
+					| 
+
+PARA_M 				: tokenPara tokenOPar VAR_PARA tokenPtoComa COND tokenPtoComa PASO_PARA tokenCPar tokenOInter LIST_SENTSM tokenCInter
+
+PARA_F 				: tokenPara tokenOPar VAR_PARA tokenPtoComa COND tokenPtoComa PASO_PARA tokenCPar tokenOInter LIST_SENTSF tokenCInter
+
+VAR_PARA 			: TIPO tokenId tokenIgual tokenEntero
+					| tokenId tokenIgual tokenEntero
+
+PASO_PARA 			: ASIGNACION
+
+MIENTRAS_M 			: tokenMientras tokenOPar COND tokenCPar tokenOInter LIST_SENTSM tokenCInter
+
+MIENTRAS_F 			: tokenMientras tokenOPar COND tokenCPar tokenOInter LIST_SENTSF tokenCInter
+
+HACER_M 			: tokenHacer tokenOInter LIST_SENTSM tokenCInter tokenMientras tokenOPar COND tokenCPar tokenDolar
+
+HACER_F 			: tokenHacer tokenOInter LIST_SENTSF tokenCInter tokenMientras tokenOPar COND tokenCPar tokenDolar
+
+GRAFICAR 			: tokenGraficar tokenOPar LLAMADA tokenCPar
+
+PINTAR 				: tokenPintar tokenOPar E tokenCPar

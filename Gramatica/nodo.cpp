@@ -14,6 +14,9 @@ Nodo::Nodo(char *token_, char *lexema_, int fila_, int columna_)
     lexema.append(lexema_);
     fila = fila_;
     columna = columna_;
+
+    if (token.compare("tokenCadena") == 0)
+        lexema.remove("\"");
 }
 
 Nodo::~Nodo()
@@ -26,46 +29,6 @@ Nodo::~Nodo()
         delete nodo;
         nodo = NULL;
     }
-}
-
-char *Nodo::getToken()
-{
-    return token.toLatin1().data();
-}
-
-void Nodo::setToken(char *value)
-{
-    token.append(value);
-}
-
-char *Nodo::getLexema()
-{
-    return lexema.toLatin1().data();
-}
-
-void Nodo::setLexema(char *value)
-{
-    lexema.append(value);
-}
-
-int Nodo::getFila()
-{
-    return fila;
-}
-
-void Nodo::setFila(int value)
-{
-    fila = value;
-}
-
-int Nodo::getColumna()
-{
-    return columna;
-}
-
-void Nodo::setColumna(int value)
-{
-    columna = value;
 }
 
 QList<Nodo *> Nodo::getHijos()
@@ -86,4 +49,44 @@ char *Nodo::getText()
     texto.append(lexema);
 
     return texto.toLatin1().data();
+}
+
+QString Nodo::getToken() const
+{
+    return token;
+}
+
+void Nodo::setToken(const QString &value)
+{
+    token = value;
+}
+
+QString Nodo::getLexema() const
+{
+    return lexema;
+}
+
+void Nodo::setLexema(const QString &value)
+{
+    lexema = value;
+}
+
+int Nodo::getFila() const
+{
+    return fila;
+}
+
+void Nodo::setFila(int value)
+{
+    fila = value;
+}
+
+int Nodo::getColumna() const
+{
+    return columna;
+}
+
+void Nodo::setColumna(int value)
+{
+    columna = value;
 }

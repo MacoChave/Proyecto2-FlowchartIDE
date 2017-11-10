@@ -44,12 +44,14 @@
 %token <cadena> tokenVoid
 %token <cadena> tokenRetorna
 %token <cadena> tokenSalir
+%token <cadena> tokenGraficar
+%token <cadena> tokenPintar
 
+%token <cadena> tokenString
 %token <cadena> tokenInt
 %token <cadena> tokenDouble
-%token <cadena> tokenBool
 %token <cadena> tokenChar
-%token <cadena> tokenString
+%token <cadena> tokenBool
 
 %token <cadena> tokenVar
 %token <cadena> tokenIgual tokenIncremento tokenDecremento
@@ -74,6 +76,8 @@
 %token <cadena> tokenCadena
 %token <cadena> tokenEntero
 %token <cadena> tokenDecimal
+%token <cadena> tokenCaracter
+%token <cadena> tokenTrue tokenFalse
 %token <cadena> tokenId
 
 %left tokenPotencia
@@ -89,7 +93,8 @@
 %type <Nodo> CLASE
 %type <Nodo> VISIBILIDAD
 %type <Nodo> LIST_CUERPO_CLASE CUERPO_CLASE
-%type <Nodo> PROCEDIMIENTO DECLARACION_G
+%type <Nodo> SENTENCIA
+%type <Nodo> PROCEDIMIENTO
 %type <Nodo> PRINCIPAL METODO FUNCION
 %type <Nodo> LIST_PAR PAR
 %type <Nodo> LIST_SENTSM LIST_SENTSF SENTSM SENTSF
@@ -100,6 +105,7 @@
 %type <Nodo> LLAMADA
 %type <Nodo> TIPO
 %type <Nodo> ATTRS LIST_ATTR
+%type <Nodo> DECLARACION_G
 %type <Nodo> DECLARACION ASIGN_DEC
 %type <Nodo> LIST_ID
 %type <Nodo> ASIGNACION
@@ -107,6 +113,7 @@
 %type <Nodo> PARA_M PARA_F VAR_PARA PASO_PARA
 %type <Nodo> MIENTRAS_M MIENTRAS_F
 %type <Nodo> HACER_M HACER_F
+%type <Nodo> GRAFICAR PINTAR
 
 %start S0
 
@@ -234,7 +241,7 @@ CUERPO_CLASE		: PRINCIPAL
 
 						$$ = padre;
 					}
-					| VISIBILIDAD PROCEDIMIENTO
+					| VISIBILIDAD SENTENCIA
 					{
 						Nodo *padre = new Nodo("CUERPO_CLASE", "---", 0, 0);
 						
@@ -257,43 +264,23 @@ PRINCIPAL 			: tokenMain tokenOPar tokenCPar tokenOInter LIST_SENTSM tokenCInter
 					}
 					;
 
-PROCEDIMIENTO 		: DECLARACION_G tokenDolar
+SENTENCIA 			: DECLARACION_G tokenDolar
 					{
-						Nodo *padre = new Nodo("PROCEDIMIENTO", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
-					| FUNCION
+					| PROCEDIMIENTO
 					{
-						Nodo *padre = new Nodo("PROCEDIMIENTO", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
-					}
-					| METODO
-					{
-						Nodo *padre = new Nodo("PROCEDIMIENTO", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					;
 
-DECLARACION_G 		: tokenVar TIPO LIST_ID ASIGN_DEC
+PROCEDIMIENTO 		: FUNCION
 					{
-						Nodo *padre = new Nodo("DECLARACION_G", "---", 0, 0);
-						Nodo *tokenVar = new Nodo("tokenVar", $1, yyfila, yycolumna);
-						
-						padre->addHijo(tokenVar);
-						padre->addHijo($2);
-						padre->addHijo($3);
-						padre->addHijo($4);
-
-						$$ = padre;
+						$$ = $1;
+					}
+					| METODO
+					{
+						$$ = $1;
 					}
 					;
 
@@ -347,60 +334,45 @@ LIST_SENTSM 		: LIST_SENTSM SENTSM
 
 SENTSM 				: DECLARACION tokenDolar
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| ASIGNACION tokenDolar
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| SI_M
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| PARA_M
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| MIENTRAS_M
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| HACER_M
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| tokenSalir tokenDolar
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
 						Nodo *tokenSalir = new Nodo("tokenSalir", $1, yyfila, yycolumna);
 
-						padre->addHijo(tokenSalir);
-
-						$$ = padre;
+						$$ = tokenSalir;
+					}
+					| LLAMADA tokenDolar
+					{
+						$$ = $1;
+					}
+					| GRAFICAR tokenDolar
+					{
+						$$ = $1;
+					}
+					| PINTAR tokenDolar
+					{
+						$$ = $1;
 					}
 					;
 
@@ -425,68 +397,49 @@ LIST_SENTSF 		: LIST_SENTSF SENTSF
 
 SENTSF 				: DECLARACION tokenDolar
 					{
-						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| ASIGNACION tokenDolar
 					{
-						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| RETORNA
 					{
-						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
-						
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| SI_F
 					{
-						Nodo *padre = new Nodo("SENTSF", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| PARA_F
 					{
-						Nodo *padre = new Nodo("SENTS_F", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| MIENTRAS_F
 					{
-						Nodo *padre = new Nodo("SENTS_F", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| HACER_F
 					{
-						Nodo *padre = new Nodo("SENTS_F", "---", 0, 0);
-
-						padre->addHijo($1);
-
-						$$ = padre;
+						$$ = $1;
 					}
 					| tokenSalir tokenDolar
 					{
-						Nodo *padre = new Nodo("SENTSM", "---", 0, 0);
 						Nodo *tokenSalir = new Nodo("tokenSalir", $1, yyfila, yycolumna);
 
-						padre->addHijo(tokenSalir);
-
-						$$ = padre;
+						$$ = tokenSalir;
+					}
+					| LLAMADA tokenDolar
+					{
+						$$ = $1;
+					}
+					| GRAFICAR tokenDolar
+					{
+						$$ = $1;
+					}
+					| PINTAR tokenDolar
+					{
+						$$ = $1;
 					}
 					;
 
@@ -523,7 +476,7 @@ TIPO 				: tokenInt
 					| tokenBool
 					{
 						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
-						Nodo *tokenbool = new Nodo("tokenbool", $1, yyfila, yycolumna);
+						Nodo *tokenbool = new Nodo("tokenBool", $1, yyfila, yycolumna);
 						
 						padre->addHijo(tokenbool);
 						
@@ -545,6 +498,15 @@ TIPO 				: tokenInt
 						
 						padre->addHijo(tokenString);
 						
+						$$ = padre;
+					}
+					| tokenId
+					{
+						Nodo *padre = new Nodo("TIPO", "---", 0, 0);
+						Nodo *tokenId = new Nodo("tokenId", $1, yyfila, yycolumna);
+
+						padre->addHijo(tokenId);
+
 						$$ = padre;
 					}
 					;
@@ -864,6 +826,33 @@ E 					: E tokenMas E
 
 						$$ = padre;
 					}
+					| tokenCaracter
+					{
+						Nodo *padre = new Nodo("E", "---", 0, 0);
+						Nodo *tokenCaracter = new Nodo("tokenCaracter", $1, yyfila, yycolumna);
+
+						padre->addHijo(tokenCaracter);
+
+						$$ = padre;
+					}
+					| tokenTrue
+					{
+						Nodo *padre = new Nodo("E", "---", 0, 0);
+						Nodo *tokenTrue = new Nodo("tokenTrue", "1", yyfila, yycolumna);
+
+						padre->addHijo(tokenTrue);
+
+						$$ = padre;
+					}
+					| tokenFalse
+					{
+						Nodo *padre = new Nodo("E", "---", 0, 0);
+						Nodo *tokenFalse = new Nodo("tokenFalse", "0", yyfila, yycolumna);
+
+						padre->addHijo(tokenFalse);
+
+						$$ = padre;
+					}
 					| tokenId
 					{
 						Nodo *padre = new Nodo("E", "---", 0, 0);
@@ -885,7 +874,7 @@ E 					: E tokenMas E
 
 LLAMADA 			: tokenId tokenOPar ATTRS tokenCPar
 					{
-						Nodo *padre = new Nodo("LLAMDA", "---", 0, 0);
+						Nodo *padre = new Nodo("LLAMADA", "---", 0, 0);
 						Nodo *tokenId = new Nodo("tokenID", $1, yyfila, yycolumna);
 						
 						padre->addHijo(tokenId);
@@ -929,6 +918,20 @@ LIST_ATTR 			: LIST_ATTR tokenComa COND
 						Nodo *padre = new Nodo("LIST_ATTR", "---", 0, 0);
 						
 						padre->addHijo($1);
+
+						$$ = padre;
+					}
+					;
+
+DECLARACION_G 		: tokenVar TIPO LIST_ID ASIGN_DEC
+					{
+						Nodo *padre = new Nodo("DECLARACION_G", "---", 0, 0);
+						Nodo *tokenVar = new Nodo("tokenVar", $1, yyfila, yycolumna);
+						
+						padre->addHijo(tokenVar);
+						padre->addHijo($2);
+						padre->addHijo($3);
+						padre->addHijo($4);
 
 						$$ = padre;
 					}
@@ -1172,5 +1175,28 @@ HACER_F 			: tokenHacer tokenOInter LIST_SENTSF tokenCInter tokenMientras tokenO
 
 						$$ = padre;
 					}
+
+GRAFICAR 			: tokenGraficar tokenOPar LLAMADA tokenCPar
+					{
+						Nodo *padre = new Nodo("GRAFICAR", "---", 0, 0);
+						Nodo *tokenGraficar = new Nodo("tokenGraficar", $1, yyfila, yycolumna);
+						
+						padre->addHijo(tokenGraficar);
+						padre->addHijo($3);
+
+						$$ = padre;
+					}
+
+PINTAR 				: tokenPintar tokenOPar E tokenCPar
+					{
+						Nodo *padre = new Nodo("PINTAR", "---", 0, 0);
+						Nodo *tokenPintar = new Nodo("tokenPintar", $1, yyfila, yycolumna);
+
+						padre->addHijo(tokenPintar);
+						padre->addHijo($3);
+
+						$$ = padre;
+					}
+					;
 
 %%
