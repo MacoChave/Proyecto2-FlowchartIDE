@@ -14,6 +14,7 @@ Principal::Principal(QWidget *parent) :
     width = 641;
     height = 371;
     ui->setupUi(this);
+    escribir("log init\n\n", "/home/marco/Escritorio/log.txt", "w");
 }
 
 Principal::~Principal()
@@ -39,7 +40,11 @@ void Principal::on_actionOpenFile_triggered()
     QFile file(filename);
 
     if (!file.open(QFile::ReadOnly | QFile::Text))
-        ui->edtConsole->append("[e] Error al abrir el archivo" + filename + "\n");
+    {
+        escribir("[e] Error al abrir el archivo", "/home/marco/Escritorio/log.txt", "a");
+        escribir(filename.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+    }
     else
     {
         QTextStream in (&file);
@@ -62,7 +67,6 @@ void Principal::on_actionOpenProject_triggered()
     dirModel = new QFileSystemModel(this);
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::CaseSensitive);
     dirModel->setRootPath(path);
-    ui->edtConsole->append(path + "\n");
 
     ui->treeFiles->setModel(dirModel);
 }
@@ -75,7 +79,11 @@ void Principal::on_actionSaveFile_triggered()
         QFile file(filename);
 
         if (!file.open(QFile::WriteOnly | QFile::Text))
-            ui->edtConsole->append("[e] Error al abrir el archivo" + filename + "\n");
+        {
+            escribir("[e] Error al abrir el archivo", "/home/marco/Escritorio/log.txt", "a");
+            escribir(filename.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+        }
         else
         {
             QString text = getTextSelectedTab(ui->tabFiles->currentWidget());
@@ -103,7 +111,11 @@ void Principal::on_actionSaveAsFile_triggered()
     QFile file(filename);
 
     if (!file.open(QFile::WriteOnly | QFile::Text))
-        ui->edtConsole->append("[e] Error al abrir el archivo" + filename + "\n");
+    {
+        escribir("[e] Error al abrir el archivo", "/home/marco/Escritorio/log.txt", "a");
+        escribir(filename.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+    }
     else
     {
         QString text = getTextSelectedTab(ui->tabFiles->currentWidget());
@@ -160,21 +172,19 @@ void Principal::on_actionBuild_triggered()
 
             int cmd_res = system("dot -Tpng /home/marco/Escritorio/ast.dot -o /home/marco/Escritorio/ast.png");
 
-            cout << cmd_res << endl;
+            cout << "DOT -> " << cmd_res << endl;
 
             if (cmd_res == 0)
             {
-                cout << "SE GRAFICÓ EL AST" << endl;
+                escribir("[i] Se graficó el AST\n", "/home/marco/Escritorio/log.txt", "a");
                 nodos << raiz;
             }
 
             vaciarArbol();
         }
         else
-            cout << "NO SE CREÓ EL AST" << endl;
+            escribir("[e] No se pudo crear el AST\n", "/home/marco/Escritorio/log.txt", "a");
     }
-
-    cout << "NUMERO DE CLASES ANALIZADAS: " << nodos.count() << endl;
 }
 
 void Principal::on_actionRun_triggered()
@@ -195,7 +205,7 @@ void Principal::on_actionRun_triggered()
         ejecutarMetodo(metodoMain->getHijos().back());
     }
     else
-        ui->edtConsole->append("[e] No se encontró método Main\n");
+        escribir("[e] No se encontro metodo Main\n", "/home/marco/Escritorio/log.txt", "a");
 }
 
 void Principal::on_actionErrores_triggered()
@@ -210,16 +220,33 @@ void Principal::on_actionShowErrorTable_triggered()
 
 void Principal::on_actionShowSymbolTable_triggered()
 {
-
+    foreach (Ambito *ambito, ambitos) {
+        escribir("AMBITO\t\tTIPO\n\t", "/home/marco/Escritorio/log.txt", "a");
+        escribir(ambito->getNombre().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+        escribir("\t\t", "/home/marco/Escritorio/log.txt", "a");
+        escribir(ambito->getTipo().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+        escribir("\nTIPO\t\tID\t\tVALOR\n", "/home/marco/Escritorio/log.txt", "a");
+        foreach (Variable *variable, ambito->getVariables()) {
+            escribir(variable->getTipo().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir("\t\t", "/home/marco/Escritorio/log.txt", "a");
+            escribir(variable->getNombre().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir("\t\t", "/home/marco/Escritorio/log.txt", "a");
+            if (variable->getValor().isEmpty())
+                escribir("Sin valor asignado", "/home/marco/Escritorio/log.txt", "a");
+            else
+                escribir(variable->getValor().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+        }
+        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+    }
+    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
 }
 
 void Principal::on_treeFiles_clicked(const QModelIndex &index)
 {
     fileSelected = dirModel->filePath(index);
 
-    if (fileSelected.endsWith(".fi"))
-        ui->edtConsole->append(fileSelected);
-    else
+    if (!fileSelected.endsWith(".fi"))
         fileSelected.clear();
 }
 
@@ -233,7 +260,11 @@ void Principal::on_treeFiles_doubleClicked(const QModelIndex &index)
         QString texto;
 
         if (!file.open(QFile::ReadOnly | QFile::Text))
-            ui->edtConsole->append("[e] Error al abrir el archivo" + selected + "\n");
+        {
+            escribir("[e] Error al abrir el archivo", "/home/marco/Escritorio/log.txt", "a");
+            escribir(selected.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+        }
         else
         {
             QTextStream in (&file);
@@ -245,7 +276,10 @@ void Principal::on_treeFiles_doubleClicked(const QModelIndex &index)
         createTab(selected, texto);
     }
     else
+    {
+        escribir("[e] No se seleccionó un archivo válido para analizarlo", "/home/marco/Escritorio/log.txt", "a");
         selected.clear();
+    }
 }
 
 void Principal::createTab(QString name, QString text)
@@ -411,7 +445,13 @@ void Principal::ejecutarMetodo(Nodo *sentencias)
             if (dato->tipo.compare(datoaux->tipo) == 0)
                 dato->valor = datoaux->valor;
             else
-                ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+            {
+                escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+                escribir(datoaux->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                escribir(" no coincide con tipo", "/home/marco/Escritorio/log.txt", "a");
+                escribir(dato->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+            }
         }
 
 
@@ -440,7 +480,13 @@ void Principal::ejecutarMetodo(Nodo *sentencias)
                     if (dato != 0 && var->getTipo().compare(dato->tipo) == 0)
                         var->setValor(dato->valor);
                     else
-                        ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+                    {
+                        escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(var->getTipo().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir(" no coincide con tipo ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(dato->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+                    }
 
                     bandera = true;
                     break;
@@ -521,7 +567,13 @@ TipoDato *Principal::ejecutarFuncion(Nodo *sentencias)
             if (dato->tipo.compare(datoaux->tipo) == 0)
                 dato->valor = datoaux->valor;
             else
-                ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+            {
+                escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+                escribir(datoaux->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                escribir(" no coincide con tipo", "/home/marco/Escritorio/log.txt", "a");
+                escribir(dato->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+            }
         }
 
 
@@ -550,7 +602,13 @@ TipoDato *Principal::ejecutarFuncion(Nodo *sentencias)
                     if (dato != 0 && var->getTipo().compare(dato->tipo) == 0)
                         var->setValor(dato->valor);
                     else
-                        ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+                    {
+                        escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(var->getTipo().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir(" no coincide con tipo ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(dato->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+                    }
 
                     bandera = true;
                     break;
@@ -664,10 +722,18 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
                     }
                 }
                 else
-                    ui->edtConsole->append("Error semantico. Elemento izquierdo no es de tipo bool\n");
+                {
+                    escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(cond_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" no coincide con tipo bool", "/home/marco/Escritorio/log.txt", "a");
+                }
             }
             else
-                ui->edtConsole->append("Error semantico. Elemento derecho no es de tipo bool\n");
+            {
+                escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+                escribir(cond_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+            }
 
             delete (cond_a);
             delete (cond_b);
@@ -734,7 +800,11 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
                 result->valor = "1";
         }
         else
-            ui->edtConsole->append("Error semantico. Elemento no es de tipo bool\n");
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+        }
 
         delete (cond);
     }
@@ -769,7 +839,13 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                         result->valor = e_a->valor + e_b->valor;
                     }
                     else
-                        ui->edtConsole->append("Error semantico. No se puede operar un tipo nulo.");
+                    {
+                        escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir(" + ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+                    }
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
@@ -783,7 +859,13 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                             result->valor = "0";
                     }
                     else
-                        ui->edtConsole->append("Error semantico. No se puede operar un tipo nulo.");
+                    {
+                        escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir(" + ", "/home/marco/Escritorio/log.txt", "a");
+                        escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                        escribir("\n", "/home/marco/Escritorio/log.txt", "a");
+                    }
                 }
                 else
                 {
@@ -812,16 +894,24 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             case '-':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string - string\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" - ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer bool - bool\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" - ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else
                 {
                     // double(int | char | bool | double) - double(int | char | bool | double)
-                    if (e_a->tipo.compare("double") || e_b->tipo.compare("double") == 0)
+                    if (e_a->tipo.compare("double") == 0 || e_b->tipo.compare("double") == 0)
                         result->tipo = "double";
                     else
                         result->tipo = "int";
@@ -845,7 +935,11 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             case '*':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string * string\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" * ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
@@ -859,7 +953,7 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                 else
                 {
                     // double(int | char | bool | double) * double(int | char | bool | double)
-                    if (e_a->tipo.compare("double") || e_b->tipo.compare("double") == 0)
+                    if (e_a->tipo.compare("double") == 0 || e_b->tipo.compare("double") == 0)
                         result->tipo = "double";
                     else
                         result->tipo = "int";
@@ -883,11 +977,19 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             case '/':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string / string\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" / ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer bool / bool\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" / ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else
                 {
@@ -913,16 +1015,24 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             case '^':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string ^ string\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" ^ ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer bool ^ bool\n");
+                    escribir("[e] ERROR SEMÁNTICO - No se puede operar ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_a->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir(" ^ ", "/home/marco/Escritorio/log.txt", "a");
+                    escribir(e_b->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+                    escribir("\n", "/home/marco/Escritorio/log.txt", "a");
                 }
                 else
                 {
                     // double(int | char | bool | double) ^ double(int | char | bool | double)
-                    if (e_a->tipo.compare("double") || e_b->tipo.compare("double") == 0)
+                    if (e_a->tipo.compare("double") == 0 || e_b->tipo.compare("double") == 0)
                         result->tipo = "double";
                     else
                         result->tipo = "int";
@@ -1010,7 +1120,10 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                         break;
                     }
                 }
-                if (result != NULL)
+                if (result != NULL
+                        || ambito->getNombre().compare("MAIN") != 0
+                        || ambito->getNombre().compare("FUNCION") != 0
+                        || ambito->getNombre().compare("METODO") != 0)
                     break;
             }
         }
@@ -1021,7 +1134,9 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             proc = buscar(proc->getHijos().at(0)->getLexema());
             result = ejecutarFuncion(proc);
 
-            ui->edtConsole->append("Error semantico. Función no implementada\n");
+            escribir("[e] ERROR SEMÁNTICO - No se encontro la función ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(proc->getHijos().at(0)->getLexema().toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir("\n", "/home/marco/Escritorio/log.txt", "a");
         }
     }
 
