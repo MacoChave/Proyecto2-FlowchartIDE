@@ -48,8 +48,11 @@ ejecutarMetodo(Nodo sentencias)
 	if (sentencias->getHijos->count > 1)
 		ejecutarMetodo(sentencias->getHijos->front)
 	Nodo sentencia = sentencias->getHijos->back
+	
 	if (sentencia->token == "DECLARACION")
+	
 	else if (sentencia->token == "ASIGNACION")
+	
 	else if (sentencia->token == "SI_M")
 		String cond = obtenerCOND(sentencia->getHijos(1))
 		if (cond.startWith("bool"))
@@ -64,7 +67,9 @@ ejecutarMetodo(Nodo sentencias)
 					ejecutarMetodo(sentencia->getHijos->back)
 		else
 			log.e("Error semantico.")
+	
 	else if (sentencia->token == "PARA_M")
+	
 	else if (sentencia->token == "MIENTRAS_M")
 		PTO_MIENTRAS_M:
 		String cond = obtenerCOND(sentencia->getHijos(2))
@@ -78,6 +83,7 @@ ejecutarMetodo(Nodo sentencias)
 				goto PTO_GRANDE_M;
 		else
 			log.e("Error semantico.")
+	
 	else if (sentencia->token == "HACER_M")
 		PTO_HACER_M:
 		Ambito ambito = new Ambito(
@@ -91,10 +97,13 @@ ejecutarMetodo(Nodo sentencias)
 				goto PTO_HACER_M;
 		else
 			log.e("Error semantico")
+	
 	else if (sentencia->token == "GRAFICAR")
 		dibujarProcedimiento(sentencia->getHijos(2))
+	
 	else if (sentencia->token == "PINTAR")
 		log.i(obtenerE(sentencia->getHijos(2)))
+	
 	else if (sentencia->token == "tokenSalir")
 		String ambito = ambitos->back->getAmbito()
 		if (ambito.compare("PARA") == 0
@@ -103,6 +112,7 @@ ejecutarMetodo(Nodo sentencias)
 			ambitos.pop()
 		else
 			log.e("Error semantico")
+	
 	else if (sentencia->token == "LLAMADA")
 		String nombre = sentencia->getHijos->front->lexema
 		Nodo proc = buscar(nombre)

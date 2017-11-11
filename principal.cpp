@@ -501,35 +501,104 @@ void Principal::ejecutarMetodo(Nodo *sentencias)
     }
     else if (sentencia->getToken().compare("SI_M") == 0)
     {
+        TipoDato *cond = obtenerCOND(sentencia->getHijos().at(1));
 
+        if (cond->tipo.compare("bool") == 0)
+        {
+            if (cond->valor.toInt())
+            {
+                Ambito *ambito = new Ambito(
+                            "SI", "SI");
+                ambitos << ambito;
+                ejecutarMetodo(sentencia->getHijos().at(2));
+            }
+            else
+            {
+                Nodo *sino = sentencia->getHijos().back();
+
+                if (sino->getHijos().count() > 1)
+                {
+                    Ambito *ambito = new Ambito(
+                                "SINO", "SINO");
+                    ambitos << ambito;
+                    ejecutarMetodo(sino->getHijos().back());
+                }
+            }
+        }
+        else
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+        }
     }
     else if (sentencia->getToken().compare("PARA_M") == 0)
     {
-
     }
     else if (sentencia->getToken().compare("MIENTRAS_M") == 0)
     {
-
+        TipoDato *cond;
+        MIENTRAS_M:
+        cond = obtenerCOND(sentencia->getHijos().at(2));
+        if (cond->tipo.compare("bool") == 0)
+        {
+            if (cond->valor.toInt())
+            {
+                Ambito *ambito = new Ambito(
+                            "MIENTRAS", "MIENTRAS");
+                ambitos << ambito;
+                ejecutarMetodo(sentencia->getHijos().at(5));
+            }
+            else
+                return;
+        }
+        else
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+            return;
+        }
+        goto MIENTRAS_M;
     }
     else if (sentencia->getToken().compare("HACER_M") == 0)
     {
+        TipoDato *cond;
+        HACER_M:
+        Ambito *ambito = new Ambito(
+                    "HACER", "HACER");
+        ambitos << ambito;
+        ejecutarMetodo(sentencia->getHijos().at(2));
 
+        cond = obtenerCOND(sentencia->getHijos().at(6));
+        if (cond->tipo.compare("bool") == 0)
+        {
+            if (cond->valor.toInt())
+                goto HACER_M;
+            else
+                return;
+        }
+        else
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+            return;
+        }
     }
     else if (sentencia->getToken().compare("GRAFICAR") == 0)
     {
-
     }
     else if (sentencia->getToken().compare("PINTAR") == 0)
     {
-
+        TipoDato *dato = obtenerE(sentencia->getHijos().back());
+        ui->edtConsole->append(dato->valor);
     }
     else if (sentencia->getToken().compare("LLAMADA") == 0)
     {
-
     }
     else
     {
-
     }
 }
 
@@ -538,7 +607,7 @@ TipoDato *Principal::ejecutarFuncion(Nodo *sentencias)
     TipoDato *result = 0;
 
     if (sentencias->getHijos().count() > 1)
-        ejecutarMetodo(sentencias->getHijos().front());
+        ejecutarFuncion(sentencias->getHijos().front());
 
     Nodo *sentencia, *nodoaux = 0;
     sentencia = sentencias->getHijos().back();
@@ -623,39 +692,107 @@ TipoDato *Principal::ejecutarFuncion(Nodo *sentencias)
     }
     else if (sentencia->getToken().compare("RETORNA") == 0)
     {
-
     }
-    else if (sentencia->getToken().compare("SI_M") == 0)
+    else if (sentencia->getToken().compare("SI_F") == 0)
     {
+        TipoDato *cond = obtenerCOND(sentencia->getHijos().at(1));
 
+        if (cond->tipo.compare("bool") == 0)
+        {
+            if (cond->valor.toInt())
+            {
+                Ambito *ambito = new Ambito(
+                            "SI", "SI");
+                ambitos << ambito;
+                ejecutarFuncion(sentencia->getHijos().at(2));
+            }
+            else
+            {
+                Nodo *sino = sentencia->getHijos().back();
+
+                if (sino->getHijos().count() > 1)
+                {
+                    Ambito *ambito = new Ambito(
+                                "SINO", "SINO");
+                    ambitos << ambito;
+                    ejecutarFuncion(sino->getHijos().back());
+                }
+            }
+        }
+        else
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+        }
     }
-    else if (sentencia->getToken().compare("PARA_M") == 0)
+    else if (sentencia->getToken().compare("PARA_F") == 0)
     {
-
     }
-    else if (sentencia->getToken().compare("MIENTRAS_M") == 0)
+    else if (sentencia->getToken().compare("MIENTRAS_F") == 0)
     {
-
+        TipoDato *cond;
+        MIENTRAS_F:
+        cond = obtenerCOND(sentencia->getHijos().at(2));
+        if (cond->tipo.compare("bool") == 0)
+        {
+            if (cond->valor.toInt())
+            {
+                Ambito *ambito = new Ambito(
+                            "MIENTRAS", "MIENTRAS");
+                ambitos << ambito;
+                ejecutarFuncion(sentencia->getHijos().at(5));
+            }
+            else
+                return result;
+        }
+        else
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+            return result;
+        }
+        goto MIENTRAS_F;
     }
-    else if (sentencia->getToken().compare("HACER_M") == 0)
+    else if (sentencia->getToken().compare("HACER_F") == 0)
     {
+        TipoDato *cond;
+        HACER_F:
+        Ambito *ambito = new Ambito(
+                    "HACER", "HACER");
+        ambitos << ambito;
+        ejecutarFuncion(sentencia->getHijos().at(2));
 
+        cond = obtenerCOND(sentencia->getHijos().at(6));
+        if (cond->tipo.compare("bool") == 0)
+        {
+            if (cond->valor.toInt())
+                goto HACER_F;
+            else
+                return result;
+        }
+        else
+        {
+            escribir("[e] ERROR SEMÁNTICO - Tipo ", "/home/marco/Escritorio/log.txt", "a");
+            escribir(cond->tipo.toLatin1().data(), "/home/marco/Escritorio/log.txt", "a");
+            escribir(" no coincide con tipo bool\n", "/home/marco/Escritorio/log.txt", "a");
+            return result;
+        }
     }
     else if (sentencia->getToken().compare("GRAFICAR") == 0)
     {
-
     }
     else if (sentencia->getToken().compare("PINTAR") == 0)
     {
-
+        TipoDato *dato = obtenerE(sentencia->getHijos().at(2));
+        ui->edtConsole->append(dato->valor);
     }
     else if (sentencia->getToken().compare("LLAMADA") == 0)
     {
-
     }
     else
     {
-
     }
 
     return result;
