@@ -48,7 +48,7 @@ ejecutarMetodo(Nodo sentencias)
 	if (sentencias->getHijos->count > 1)
 		ejecutarMetodo(sentencias->getHijos->front)
 	Nodo sentencia = sentencias->getHijos->back
-	else if (sentencia->token == "DECLARACION")
+	if (sentencia->token == "DECLARACION")
 	else if (sentencia->token == "ASIGNACION")
 	else if (sentencia->token == "SI_M")
 		String cond = obtenerCOND(sentencia->getHijos(1))

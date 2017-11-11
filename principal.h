@@ -60,6 +60,8 @@ private slots:
 
     void on_treeFiles_clicked(const QModelIndex &index);
 
+    void on_treeFiles_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::Principal *ui;
 
@@ -108,6 +110,8 @@ private:
     TipoDato *obtenerE(Nodo *actual);
 
     QString obtenerRel(Nodo *actual);
+
+    QList<Variable *> obtenerVariable(Nodo *ids);
 };
 
 #endif // PRINCIPAL_H

@@ -17,6 +17,8 @@ Nodo::Nodo(char *token_, char *lexema_, int fila_, int columna_)
 
     if (token.compare("tokenCadena") == 0)
         lexema.remove("\"");
+    if (token.compare("tokenCaracter") == 0)
+        lexema.remove("\'");
 }
 
 Nodo::~Nodo()

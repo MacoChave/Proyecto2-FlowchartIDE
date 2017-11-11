@@ -223,6 +223,31 @@ void Principal::on_treeFiles_clicked(const QModelIndex &index)
         fileSelected.clear();
 }
 
+void Principal::on_treeFiles_doubleClicked(const QModelIndex &index)
+{
+    QString selected = dirModel->filePath(index);
+
+    if (selected.endsWith(".fi"))
+    {
+        QFile file(selected);
+        QString texto;
+
+        if (!file.open(QFile::ReadOnly | QFile::Text))
+            ui->edtConsole->append("[e] Error al abrir el archivo" + selected + "\n");
+        else
+        {
+            QTextStream in (&file);
+            texto = in.readAll();
+
+            file.close();
+        }
+
+        createTab(selected, texto);
+    }
+    else
+        selected.clear();
+}
+
 void Principal::createTab(QString name, QString text)
 {
     QString objectName;
@@ -356,22 +381,231 @@ Nodo *Principal::buscarProcedimiento(QString nombre, Nodo *cuerpos)
 
 void Principal::ejecutarMetodo(Nodo *sentencias)
 {
-    Nodo *hijo = sentencias->getHijos().back();
-
     if (sentencias->getHijos().count() > 1)
         ejecutarMetodo(sentencias->getHijos().front());
+
+    Nodo *sentencia, *nodoaux = 0;
+    sentencia = sentencias->getHijos().back();
+
+    if (sentencia->getToken().compare("DECLARACION") == 0)
+    {
+        QList<Variable *> variables = obtenerVariable(sentencia->getHijos().at(3));
+        TipoDato *dato, *datoaux = 0;
+        dato = new TipoDato();
+
+        nodoaux = sentencia->getHijos().at(2);
+        dato->tipo = nodoaux->getHijos().back()->getLexema();
+        nodoaux = sentencia->getHijos().back();
+
+        if (sentencia->getHijos().back()->getHijos().count() > 0)
+        {
+            datoaux = new TipoDato();
+            datoaux = obtenerCOND(nodoaux->getHijos().back());
+        }
+
+        delete (nodoaux);
+        nodoaux = 0;
+
+        if (datoaux != 0)
+        {
+            if (dato->tipo.compare(datoaux->tipo) == 0)
+                dato->valor = datoaux->valor;
+            else
+                ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+        }
+
+
+        foreach (Variable *item, variables) {
+            item->setTipo(dato->tipo);
+            item->setValor(dato->valor);
+
+            ambitos.back()->setVariable(item);
+        }
+
+        variables.clear();
+        delete (dato);
+        delete (datoaux);
+        dato = datoaux = 0;
+    }
+    else if (sentencia->getToken().compare("ASIGNACION") == 0)
+    {
+        TipoDato* dato = obtenerCOND(sentencia->getHijos().back());
+        bool bandera = false;
+
+        for (int i = ambitos.count() - 1; i >= 0; i--)
+        {
+            foreach (Variable *var, ambitos.at(i)->getVariables()) {
+                if (var->getNombre().compare(sentencia->getHijos().front()->getLexema()) == 0)
+                {
+                    if (dato != 0 && var->getTipo().compare(dato->tipo) == 0)
+                        var->setValor(dato->valor);
+                    else
+                        ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+
+                    bandera = true;
+                    break;
+                }
+            }
+            if (bandera
+                    || ambitos.at(i)->getNombre().compare("MAIN") == 0
+                    || ambitos.at(i)->getNombre().compare("METODO") == 0
+                    || ambitos.at(i)->getNombre().compare("FUNCION") == 0)
+                break;
+        }
+    }
+    else if (sentencia->getToken().compare("SI_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("PARA_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("MIENTRAS_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("HACER_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("GRAFICAR") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("PINTAR") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("LLAMADA") == 0)
+    {
+
+    }
+    else
+    {
+
+    }
 }
 
 TipoDato *Principal::ejecutarFuncion(Nodo *sentencias)
 {
     TipoDato *result = 0;
 
-    Nodo *hijo = sentencias->getHijos().back();
-
     if (sentencias->getHijos().count() > 1)
         ejecutarMetodo(sentencias->getHijos().front());
 
+    Nodo *sentencia, *nodoaux = 0;
+    sentencia = sentencias->getHijos().back();
+
+    if (sentencia->getToken().compare("DECLARACION") == 0)
+    {
+        QList<Variable *> variables = obtenerVariable(sentencia->getHijos().at(3));
+        TipoDato *dato, *datoaux = 0;
+        dato = new TipoDato();
+
+        nodoaux = sentencia->getHijos().at(2);
+        dato->tipo = nodoaux->getHijos().back()->getLexema();
+        nodoaux = sentencia->getHijos().back();
+
+        if (sentencia->getHijos().back()->getHijos().count() > 0)
+        {
+            datoaux = new TipoDato();
+            datoaux = obtenerCOND(nodoaux->getHijos().back());
+        }
+
+        delete (nodoaux);
+        nodoaux = 0;
+
+        if (datoaux != 0)
+        {
+            if (dato->tipo.compare(datoaux->tipo) == 0)
+                dato->valor = datoaux->valor;
+            else
+                ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+        }
+
+
+        foreach (Variable *item, variables) {
+            item->setTipo(dato->tipo);
+            item->setValor(dato->valor);
+
+            ambitos.back()->setVariable(item);
+        }
+
+        variables.clear();
+        delete (dato);
+        delete (datoaux);
+        dato = datoaux = 0;
+    }
+    else if (sentencia->getToken().compare("ASIGNACION") == 0)
+    {
+        TipoDato* dato = obtenerCOND(sentencia->getHijos().back());
+        bool bandera = false;
+
+        for (int i = ambitos.count() - 1; i >= 0; i--)
+        {
+            foreach (Variable *var, ambitos.at(i)->getVariables()) {
+                if (var->getNombre().compare(sentencia->getHijos().front()->getLexema()) == 0)
+                {
+                    if (dato != 0 && var->getTipo().compare(dato->tipo) == 0)
+                        var->setValor(dato->valor);
+                    else
+                        ui->edtConsole->append("Error semantico. Tipo de dato no coincide\n");
+
+                    bandera = true;
+                    break;
+                }
+            }
+            if (bandera
+                    || ambitos.at(i)->getNombre().compare("MAIN") == 0
+                    || ambitos.at(i)->getNombre().compare("METODO") == 0
+                    || ambitos.at(i)->getNombre().compare("FUNCION") == 0)
+                break;
+        }
+    }
+    else if (sentencia->getToken().compare("RETORNA") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("SI_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("PARA_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("MIENTRAS_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("HACER_M") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("GRAFICAR") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("PINTAR") == 0)
+    {
+
+    }
+    else if (sentencia->getToken().compare("LLAMADA") == 0)
+    {
+
+    }
+    else
+    {
+
+    }
+
     return result;
+}
+
+void Principal::dibujarMetodo(Nodo *sentencias)
+{
+
 }
 
 TipoDato *Principal::obtenerCOND(Nodo *actual)
@@ -394,6 +628,7 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
             {
                 if (cond_b->tipo.compare("bool") == 0)
                 {
+                    result = new TipoDato();
                     result->tipo = "bool";
                     result->valor = "0";
 
@@ -429,10 +664,10 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
                     }
                 }
                 else
-                    ui->edtConsole->append("Error semantico. Tipo de dato erroneo\n");
+                    ui->edtConsole->append("Error semantico. Elemento izquierdo no es de tipo bool\n");
             }
             else
-                ui->edtConsole->append("Error semantico. Tipo de dato erroneo\n");
+                ui->edtConsole->append("Error semantico. Elemento derecho no es de tipo bool\n");
 
             delete (cond_a);
             delete (cond_b);
@@ -440,6 +675,7 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
         else
         {
             // E REL E
+            result = new TipoDato();
             TipoDato *e_a, *e_b;
             QString rel;
             result->tipo = "bool";
@@ -478,6 +714,9 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
                 if (e_a->valor.compare(e_b->valor) >= 0)
                     result->valor = "1";
             }
+
+            delete (e_a);
+            delete (e_b);
         }
     }
     else if (actual->getHijos().count() == 2)
@@ -487,6 +726,7 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
 
         if (cond->tipo.compare("bool") == 0)
         {
+            result = new TipoDato();
             result->tipo = "bool";
             if (cond->valor.compare("1") == 0)
                 result->valor = "0";
@@ -494,7 +734,9 @@ TipoDato *Principal::obtenerCOND(Nodo *actual)
                 result->valor = "1";
         }
         else
-            ui->edtConsole->append("Error semantico. Tipo de dato erroneo\n");
+            ui->edtConsole->append("Error semantico. Elemento no es de tipo bool\n");
+
+        delete (cond);
     }
     else //E
         result = obtenerE(actual->getHijos().front());
@@ -512,6 +754,7 @@ TipoDato *Principal::obtenerE(Nodo *actual)
 
         if (actual->getHijos().at(1)->getLexema().compare("---") != 0)
         {
+            result = new TipoDato();
             e_a = obtenerE(actual->getHijos().front());
             e_b = obtenerE(actual->getHijos().back());
             char operando = actual->getHijos().at(1)->getLexema().toLatin1().data()[0];
@@ -520,37 +763,60 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             case '+':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    result->tipo = "string";
-                    result->valor = e_a->valor + e_b->valor;
+                    if (e_a->valor.isEmpty() || e_b->valor.isEmpty())
+                    {
+                        result->tipo = "string";
+                        result->valor = e_a->valor + e_b->valor;
+                    }
+                    else
+                        ui->edtConsole->append("Error semantico. No se puede operar un tipo nulo.");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    result->tipo = "bool";
+                    if (e_a->valor.isEmpty() || e_b->valor.isEmpty())
+                    {
+                        result->tipo = "bool";
 
-                    if (e_a->valor.toInt() || e_b->valor.toInt())
-                        result->valor = "1";
+                        if (e_a->valor.toInt() || e_b->valor.toInt())
+                            result->valor = "1";
+                        else
+                            result->valor = "0";
+                    }
                     else
-                        result->valor = "0";
+                        ui->edtConsole->append("Error semantico. No se puede operar un tipo nulo.");
                 }
                 else
                 {
                     // double(int | char | bool | double) + double(int | char | bool | double)
-                    if (e_a->tipo.compare("double") || e_b->tipo.compare("double") == 0)
+                    if (e_a->tipo.compare("double") == 0 || e_b->tipo.compare("double") == 0)
                         result->tipo = "double";
                     else
                         result->tipo = "int";
 
-                    result->valor = QString::number(e_a->valor.toDouble() + e_b->valor.toDouble());
+                    if (e_a->tipo.compare("char") == 0)
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] + e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] + e_b->valor.toDouble());
+                    }
+                    else
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toDouble() + e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toDouble() + e_b->valor.toDouble());
+                    }
                 }
                 break;
             case '-':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string - string");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer string - string\n");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer bool - bool");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer bool - bool\n");
                 }
                 else
                 {
@@ -560,13 +826,26 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                     else
                         result->tipo = "int";
 
-                    result->valor = QString::number(e_a->valor.toDouble() - e_b->valor.toDouble());
+                    if (e_a->tipo.compare("char") == 0)
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] - e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] - e_b->valor.toDouble());
+                    }
+                    else
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toDouble() - e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toDouble() - e_b->valor.toDouble());
+                    }
                 }
                 break;
             case '*':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string * string");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer string * string\n");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
@@ -585,34 +864,60 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                     else
                         result->tipo = "int";
 
-                    result->valor = QString::number(e_a->valor.toDouble() * e_b->valor.toDouble());
+                    if (e_a->tipo.compare("char") == 0)
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] * e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] * e_b->valor.toDouble());
+                    }
+                    else
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toDouble() * e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toDouble() * e_b->valor.toDouble());
+                    }
                 }
                 break;
             case '/':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string / string");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer string / string\n");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer bool / bool");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer bool / bool\n");
                 }
                 else
                 {
                     // double(int | char | bool | double) / double(int | char | bool | double)
                     result->tipo = "double";
 
-                    result->valor = QString::number(e_a->valor.toDouble() / e_b->valor.toDouble());
+                    if (e_a->tipo.compare("char") == 0)
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] / e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toLatin1().data()[0] / e_b->valor.toDouble());
+                    }
+                    else
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(e_a->valor.toDouble() / e_b->valor.toLatin1().data()[0]);
+                        else
+                            result->valor = QString::number(e_a->valor.toDouble() / e_b->valor.toDouble());
+                    }
                 }
                 break;
             case '^':
                 if (e_a->tipo.compare("string") == 0 || e_b->tipo.compare("string") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer string ^ string");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer string ^ string\n");
                 }
                 else if (e_a->tipo.compare("bool") == 0 && e_b->tipo.compare("bool") == 0)
                 {
-                    ui->edtConsole->append("Error Semántico. No se puede hacer bool ^ bool");
+                    ui->edtConsole->append("Error Semántico. No se puede hacer bool ^ bool\n");
                 }
                 else
                 {
@@ -623,6 +928,20 @@ TipoDato *Principal::obtenerE(Nodo *actual)
                         result->tipo = "int";
 
                     result->valor = QString::number(pow(e_a->valor.toDouble(), e_b->valor.toDouble()));
+                    if (e_a->tipo.compare("char") == 0)
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(pow(e_a->valor.toLatin1().data()[0], e_b->valor.toLatin1().data()[0]));
+                        else
+                            result->valor = QString::number(pow(e_a->valor.toLatin1().data()[0], e_b->valor.toDouble()));
+                    }
+                    else
+                    {
+                        if (e_b->tipo.compare("char") == 0)
+                            result->valor = QString::number(pow(e_a->valor.toDouble(), e_b->valor.toLatin1().data()[0]));
+                        else
+                            result->valor = QString::number(pow(e_a->valor.toDouble(), e_b->valor.toDouble()));
+                    }
                 }
                 break;
             default:
@@ -640,6 +959,7 @@ TipoDato *Principal::obtenerE(Nodo *actual)
     }
     else
     {
+        result = new TipoDato();
         if (actual->getHijos().back()->getToken().compare("tokenCadena") == 0)
         {
             // cadena
@@ -652,7 +972,7 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             result->tipo = "int";
             result->valor = actual->getHijos().back()->getLexema();
         }
-        else if (actual->getHijos().back()->getToken().compare("tokenChar") == 0)
+        else if (actual->getHijos().back()->getToken().compare("tokenCaracter") == 0)
         {
             // char
             result->tipo = "char";
@@ -664,7 +984,13 @@ TipoDato *Principal::obtenerE(Nodo *actual)
             result->tipo = "double";
             result->valor = actual->getHijos().back()->getLexema();
         }
-        else if (actual->getHijos().back()->getToken().compare("tokenBool") == 0)
+        else if (actual->getHijos().back()->getToken().compare("tokenFalse") == 0)
+        {
+            // bool
+            result->tipo = "bool";
+            result->valor = actual->getHijos().back()->getLexema();
+        }
+        else if (actual->getHijos().back()->getToken().compare("tokenTrue") == 0)
         {
             // bool
             result->tipo = "bool";
@@ -707,7 +1033,14 @@ QString Principal::obtenerRel(Nodo *actual)
     return actual->getHijos().front()->getLexema();
 }
 
-void Principal::dibujarMetodo(Nodo *sentencias)
+QList<Variable *> Principal::obtenerVariable(Nodo *ids)
 {
+    QList<Variable *> variables;
 
+    if (ids->getHijos().count() > 1)
+        variables = obtenerVariable(ids->getHijos().front());
+
+    variables << new Variable(ids->getHijos().back()->getLexema());
+
+    return variables;
 }
